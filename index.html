@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学式 - Chemical Formula</title>
+<style>
+:root{--panel:#0d1a30;--cyan:#00e5ff;--green:#4dffb8;--text:#f5f9ff;--red:#ff6b6b;}
+*{box-sizing:border-box}
+body{font-family:sans-serif;color:var(--text);margin:0;padding:0;
+background:linear-gradient(135deg,#050814,#09111f,#050814);min-height:100vh}
+.container{max-width:1000px;margin:auto;padding:30px}
+.title{text-align:center}
+.title h1{font-size:4rem;margin-bottom:0}
+.subtitle{color:var(--cyan);letter-spacing:4px}
+.card-area{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.card,.question,.result,.list-item,.status-box{background:var(--panel);border-radius:16px}
+.card{padding:20px;width:320px;text-align:center}
+button{padding:12px 20px;border:none;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--green));font-weight:bold}
+#content{margin-top:30px}
+.list-item{padding:10px;margin:6px 0}
+.question,.result{padding:25px;text-align:center}
+input{padding:10px;width:100%;max-width:400px;border-radius:8px;border:none}
+.correct{color:var(--green);font-size:2rem}
+.wrong{color:var(--red);font-size:2rem}
+.status{text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="title">
+<h1>化学式</h1>
+<div class="subtitle">Chemical Formula</div>
+</div>
+<div id="content"></div>
+</div>
+
+<script>
+const chemicals=[
+{name:"水",formula:"H2O"},{name:"過酸化水素",formula:"H2O2"},{name:"酸素",formula:"O2"},
+{name:"オゾン",formula:"O3"},{name:"水素",formula:"H2"},{name:"窒素",formula:"N2"},
+{name:"塩素",formula:"Cl2"},{name:"フッ素",formula:"F2"},{name:"臭素",formula:"Br2"},
+{name:"ヨウ素",formula:"I2"},{name:"アンモニア",formula:"NH3"},{name:"メタン",formula:"CH4"},
+{name:"エタン",formula:"C2H6"},{name:"プロパン",formula:"C3H8"},{name:"ブタン",formula:"C4H10"},
+{name:"エチレン",formula:"C2H4"},{name:"アセチレン",formula:"C2H2"},{name:"ベンゼン",formula:"C6H6"},
+{name:"エタノール",formula:"C2H6O"},{name:"メタノール",formula:"CH4O"},{name:"酢酸",formula:"CH3COOH"},
+{name:"ギ酸",formula:"HCOOH"},{name:"グルコース",formula:"C6H12O6"},{name:"ショ糖",formula:"C12H22O11"},
+{name:"デンプン",formula:"(C6H10O5)n"},{name:"二酸化炭素",formula:"CO2"},{name:"一酸化炭素",formula:"CO"},
+{name:"二酸化硫黄",formula:"SO2"},{name:"三酸化硫黄",formula:"SO3"},{name:"硫化水素",formula:"H2S"},
+{name:"塩化水素",formula:"HCl"},{name:"硝酸",formula:"HNO3"},{name:"硫酸",formula:"H2SO4"},
+{name:"リン酸",formula:"H3PO4"},{name:"炭酸",formula:"H2CO3"},{name:"水酸化ナトリウム",formula:"NaOH"},
+{name:"水酸化カリウム",formula:"KOH"},{name:"水酸化カルシウム",formula:"Ca(OH)2"},
+{name:"水酸化バリウム",formula:"Ba(OH)2"},{name:"アンモニア水",formula:"NH3(aq)"},
+{name:"塩化ナトリウム",formula:"NaCl"},{name:"塩化カリウム",formula:"KCl"},
+{name:"塩化カルシウム",formula:"CaCl2"},{name:"硫酸銅",formula:"CuSO4"},
+{name:"硫酸ナトリウム",formula:"Na2SO4"},{name:"炭酸カルシウム",formula:"CaCO3"},
+{name:"炭酸ナトリウム",formula:"Na2CO3"},{name:"炭酸水素ナトリウム",formula:"NaHCO3"},
+{name:"硝酸カリウム",formula:"KNO3"},{name:"硝酸銀",formula:"AgNO3"},
+{name:"過マンガン酸カリウム",formula:"KMnO4"}
+];
+
+let testQuestions=[],currentIndex=0,score=0,wrongAnswers=[];
+
+function formatFormula(f){
+ const s={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+ return f.replace(/[0-9]/g,m=>s[m]);
+}
+
+function showHome(){
+content.innerHTML=`
+<div class="card-area">
+<div class="card"><h2>リスト</h2><p>化学物質一覧を表示</p><button onclick="showList()">リストを見る</button></div>
+<div class="card"><h2>テスト</h2><p>ランダム10問出題</p><button onclick="startTest()">テスト開始</button></div>
+</div>
+<div class="status"><div class="status-box">登録化学物質数：${chemicals.length}件</div></div>`;
+}
+
+function showList(){
+ let html=`<button onclick="showHome()">ホームに戻る</button><h2>化学物質一覧</h2>`;
+ chemicals.forEach((c,i)=>html+=`<div class="list-item">${i+1}. ${c.name}</div>`);
+ content.innerHTML=html;
+}
+
+function startTest(){
+ testQuestions=[...chemicals].sort(()=>Math.random()-0.5).slice(0,10);
+ currentIndex=0;score=0;wrongAnswers=[];
+ showQuestion();
+}
+
+function showQuestion(){
+ const q=testQuestions[currentIndex];
+ content.innerHTML=`<div class="question">
+ <h2>問題 ${currentIndex+1}/10</h2>
+ <h3>${q.name}</h3>
+ <input id="answer" placeholder="化学式を入力">
+ <br><br><button onclick="checkAnswer()">解答する</button>
+ </div>`;
+ document.getElementById('answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+}
+
+function checkAnswer(){
+ const q=testQuestions[currentIndex];
+ const answer=document.getElementById('answer').value.trim();
+ const correct=answer===q.formula;
+ if(correct) score++;
+ else wrongAnswers.push({name:q.name,correct:q.formula,answer});
+ content.innerHTML=`<div class="result">
+ <div class="${correct?'correct':'wrong'}">${correct?'○ 正解':'× 不正解'}</div>
+ <h2>${q.name}</h2>
+ <p>正解：<strong>${formatFormula(q.formula)}</strong></p>
+ ${!correct?`<p>あなたの解答：${formatFormula(answer||'未入力')}</p>`:''}
+ <br><button onclick="nextQuestion()">${currentIndex===9?'結果を見る':'次の問題へ'}</button>
+ </div>`;
+}
+
+function nextQuestion(){
+ currentIndex++;
+ if(currentIndex>=10) showResult(); else showQuestion();
+}
+
+function showResult(){
+ let html=`<div class="result"><h1>テスト終了</h1><h2>${score}/10点</h2><h3>正答率 ${Math.round(score*10)}%</h3>`;
+ if(wrongAnswers.length){
+   html+=`<h3>間違えた問題</h3>`;
+   wrongAnswers.forEach(w=>html+=`<p>${w.name} → ${formatFormula(w.correct)}</p>`);
+ }
+ html+=`<br><button onclick="showHome()">ホームに戻る</button></div>`;
+ content.innerHTML=html;
+}
+
+showHome();
+</script>
+</body>
+</html>
