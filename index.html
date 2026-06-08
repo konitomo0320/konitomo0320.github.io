@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>化学式 - Chemical Formula</title>
+
 <style>
 :root{--panel:#0d1a30;--cyan:#00e5ff;--green:#4dffb8;--text:#f5f9ff;--red:#ff6b6b;}
 *{box-sizing:border-box}
@@ -19,6 +21,10 @@ background:linear-gradient(135deg,#050814,#09111f,#050814);min-height:100vh}
 button{padding:12px 20px;border:none;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--green));font-weight:bold}
 #content{margin-top:30px}
 .list-item{padding:10px;margin:6px 0}
+.list-table{width:100%;border-collapse:collapse;margin-top:20px;}
+.list-table th,
+.list-table td{border:1px solid rgba(255,255,255,.15);padding:12px;text-align:left;}
+.list-table th{background:#132341;color:#00e5ff;}
 .question,.result{padding:25px;text-align:center}
 input{padding:10px;width:100%;max-width:400px;border-radius:8px;border:none}
 .correct{color:var(--green);font-size:2rem}
@@ -37,26 +43,103 @@ input{padding:10px;width:100%;max-width:400px;border-radius:8px;border:none}
 
 <script>
 const chemicals=[
-{name:"水",formula:"H2O"},{name:"過酸化水素",formula:"H2O2"},{name:"酸素",formula:"O2"},
-{name:"オゾン",formula:"O3"},{name:"水素",formula:"H2"},{name:"窒素",formula:"N2"},
-{name:"塩素",formula:"Cl2"},{name:"フッ素",formula:"F2"},{name:"臭素",formula:"Br2"},
-{name:"ヨウ素",formula:"I2"},{name:"アンモニア",formula:"NH3"},{name:"メタン",formula:"CH4"},
-{name:"エタン",formula:"C2H6"},{name:"プロパン",formula:"C3H8"},{name:"ブタン",formula:"C4H10"},
-{name:"エチレン",formula:"C2H4"},{name:"アセチレン",formula:"C2H2"},{name:"ベンゼン",formula:"C6H6"},
-{name:"エタノール",formula:"C2H6O"},{name:"メタノール",formula:"CH4O"},{name:"酢酸",formula:"CH3COOH"},
-{name:"ギ酸",formula:"HCOOH"},{name:"グルコース",formula:"C6H12O6"},{name:"ショ糖",formula:"C12H22O11"},
-{name:"デンプン",formula:"(C6H10O5)n"},{name:"二酸化炭素",formula:"CO2"},{name:"一酸化炭素",formula:"CO"},
-{name:"二酸化硫黄",formula:"SO2"},{name:"三酸化硫黄",formula:"SO3"},{name:"硫化水素",formula:"H2S"},
-{name:"塩化水素",formula:"HCl"},{name:"硝酸",formula:"HNO3"},{name:"硫酸",formula:"H2SO4"},
-{name:"リン酸",formula:"H3PO4"},{name:"炭酸",formula:"H2CO3"},{name:"水酸化ナトリウム",formula:"NaOH"},
-{name:"水酸化カリウム",formula:"KOH"},{name:"水酸化カルシウム",formula:"Ca(OH)2"},
-{name:"水酸化バリウム",formula:"Ba(OH)2"},{name:"アンモニア水",formula:"NH3(aq)"},
-{name:"塩化ナトリウム",formula:"NaCl"},{name:"塩化カリウム",formula:"KCl"},
-{name:"塩化カルシウム",formula:"CaCl2"},{name:"硫酸銅",formula:"CuSO4"},
-{name:"硫酸ナトリウム",formula:"Na2SO4"},{name:"炭酸カルシウム",formula:"CaCO3"},
-{name:"炭酸ナトリウム",formula:"Na2CO3"},{name:"炭酸水素ナトリウム",formula:"NaHCO3"},
-{name:"硝酸カリウム",formula:"KNO3"},{name:"硝酸銀",formula:"AgNO3"},
-{name:"過マンガン酸カリウム",formula:"KMnO4"}
+{name:"水素",formula:"H2",level:"初級"},
+{name:"ヘリウム",formula:"He",level:"初級"},
+{name:"ダイヤモンド",formula:"C",level:"初級"},
+{name:"黒鉛",formula:"C",level:"初級"},
+{name:"窒素",formula:"N2",level:"初級"},
+{name:"酸素",formula:"O2",level:"初級"},
+{name:"オゾン",formula:"O3",level:"初級"},
+{name:"フッ素",formula:"F2",level:"初級"},
+{name:"ネオン",formula:"Ne",level:"初級"},
+{name:"塩素",formula:"Cl2",level:"初級"},
+{name:"アルゴン",formula:"Ar",level:"初級"},
+{name:"臭素",formula:"Br2",level:"初級"},
+{name:"ヨウ素",formula:"I2",level:"初級"},
+{name:"水",formula:"H2O",level:"初級"},
+{name:"一酸化炭素",formula:"CO",level:"初級"},
+{name:"二酸化炭素",formula:"CO2",level:"初級"},
+{name:"一酸化窒素",formula:"NO",level:"初級"},
+{name:"二酸化窒素",formula:"NO2",level:"初級"},
+{name:"二酸化ケイ素",formula:"SiO2",level:"初級"},
+{name:"十酸化四リン",formula:"P4O10",level:"初級"},
+{name:"二酸化硫黄",formula:"SO2",level:"初級"},
+{name:"三酸化硫黄",formula:"SO3",level:"初級"},
+{name:"フッ化水素",formula:"HF",level:"初級"},
+{name:"塩化水素",formula:"HCl",level:"初級"},
+{name:"臭化水素",formula:"HBr",level:"初級"},
+{name:"ヨウ化水素",formula:"HI",level:"初級"},
+
+{name:"硝酸",formula:"HNO3",level:"中級"},
+{name:"硫酸",formula:"H2SO4",level:"中級"},
+{name:"酢酸",formula:"CH3COOH",level:"中級"},
+{name:"シュウ酸",formula:"(COOH)2",level:"中級"},
+{name:"リン酸",formula:"H3PO4",level:"中級"},
+{name:"水酸化ナトリウム",formula:"NaOH",level:"中級"},
+{name:"水酸化カリウム",formula:"KOH",level:"中級"},
+{name:"水酸化カルシウム",formula:"Ca(OH)2",level:"中級"},
+{name:"水酸化バリウム",formula:"Ba(OH)2",level:"中級"},
+{name:"水酸化銅(Ⅱ)",formula:"Cu(OH)2",level:"中級"},
+{name:"水酸化鉄(Ⅱ)",formula:"Fe(OH)2",level:"中級"},
+{name:"水酸化鉄(Ⅲ)",formula:"Fe(OH)3",level:"中級"},
+{name:"酸化ナトリウム",formula:"Na2O",level:"中級"},
+{name:"酸化マグネシウム",formula:"MgO",level:"中級"},
+{name:"酸化アルミニウム",formula:"Al2O3",level:"中級"},
+{name:"酸化カルシウム",formula:"CaO",level:"中級"},
+{name:"酸化マンガン(Ⅳ)",formula:"MnO2",level:"中級"},
+{name:"酸化鉄(Ⅱ)",formula:"FeO",level:"中級"},
+{name:"酸化鉄(Ⅲ)",formula:"Fe2O3",level:"中級"},
+{name:"四酸化三鉄",formula:"Fe3O4",level:"中級"},
+{name:"酸化銅(Ⅰ)",formula:"Cu2O",level:"中級"},
+{name:"酸化銅(Ⅱ)",formula:"CuO",level:"中級"},
+{name:"酸化亜鉛",formula:"ZnO",level:"中級"},
+{name:"酸化銀",formula:"Ag2O",level:"中級"},
+{name:"酸化鉛(Ⅳ)",formula:"PbO2",level:"中級"},
+{name:"塩化ナトリウム",formula:"NaCl",level:"中級"},
+{name:"塩化マグネシウム",formula:"MgCl2",level:"中級"},
+{name:"塩化アルミニウム",formula:"AlCl3",level:"中級"},
+{name:"塩化カリウム",formula:"KCl",level:"中級"},
+{name:"塩化カルシウム",formula:"CaCl2",level:"中級"},
+{name:"塩化鉄(Ⅱ)",formula:"FeCl2",level:"中級"},
+{name:"塩化鉄(Ⅲ)",formula:"FeCl3",level:"中級"},
+{name:"塩化銅(Ⅱ)",formula:"CuCl2",level:"中級"},
+{name:"塩化亜鉛",formula:"ZnCl2",level:"中級"},
+{name:"塩化銀",formula:"AgCl",level:"中級"},
+{name:"塩化スズ(Ⅱ)",formula:"SnCl2",level:"中級"},
+{name:"塩化鉛(Ⅱ)",formula:"PbCl2",level:"中級"},
+{name:"四塩化炭素",formula:"CCl4",level:"中級"},
+{name:"塩化アンモニウム",formula:"NH4Cl",level:"中級"},
+{name:"硝酸アンモニウム",formula:"NH4NO3",level:"中級"},
+{name:"硫化水素",formula:"H2S",level:"中級"},
+{name:"硫化鉄(Ⅱ)",formula:"FeS",level:"中級"},
+{name:"硫化銅(Ⅱ)",formula:"CuS",level:"中級"},
+{name:"硫化亜鉛",formula:"ZnS",level:"中級"},
+{name:"硫化銀",formula:"Ag2S",level:"中級"},
+{name:"硝酸カリウム",formula:"KNO3",level:"中級"},
+{name:"硝酸銅(Ⅱ)",formula:"Cu(NO3)2",level:"中級"},
+{name:"硝酸銀",formula:"AgNO3",level:"中級"},
+{name:"硫酸カルシウム",formula:"CaSO4",level:"中級"},
+{name:"硫酸鉄(Ⅱ)",formula:"FeSO4",level:"中級"},
+{name:"硫酸銅(Ⅱ)",formula:"CuSO4",level:"中級"},
+{name:"硫酸バリウム",formula:"BaSO4",level:"中級"},
+{name:"硫酸鉛(Ⅱ)",formula:"PbSO4",level:"中級"},
+{name:"硫酸水素ナトリウム",formula:"NaHSO4",level:"中級"},
+{name:"酢酸ナトリウム",formula:"CH3COONa",level:"中級"},
+{name:"酢酸鉛(Ⅱ)",formula:"(CH3COO)2Pb",level:"中級"},
+{name:"ヨウ化カリウム",formula:"KI",level:"中級"},
+{name:"炭酸ナトリウム",formula:"Na2CO3",level:"中級"},
+{name:"炭酸カルシウム",formula:"CaCO3",level:"中級"},
+{name:"炭酸水素ナトリウム",formula:"NaHCO3",level:"中級"},
+{name:"過マンガン酸カリウム",formula:"KMnO4",level:"中級"},
+{name:"過酸化水素",formula:"H2O2",level:"中級"},
+
+{name:"シアン化水素",formula:"HCN",level:"上級"},
+{name:"グルコース",formula:"C6H12O6",level:"上級"},
+{name:"二クロム酸カリウム",formula:"K2Cr2O7",level:"上級"},
+{name:"クロム酸カリウム",formula:"K2CrO4",level:"上級"},
+
+
+{name:"",formula:"",level:"上級"},
 ];
 
 let testQuestions=[],currentIndex=0,score=0,wrongAnswers=[];
@@ -70,19 +153,67 @@ function showHome(){
 content.innerHTML=`
 <div class="card-area">
 <div class="card"><h2>リスト</h2><p>化学物質一覧を表示</p><button onclick="showList()">リストを見る</button></div>
-<div class="card"><h2>テスト</h2><p>ランダム10問出題</p><button onclick="startTest()">テスト開始</button></div>
+<div class="card">
+<h2>初級</h2>
+<button onclick="startTest('初級')">
+初級テスト
+</button>
 </div>
+
+<div class="card">
+<h2>中級</h2>
+<button onclick="startTest('中級')">
+中級テスト
+</button>
+</div>
+
+<div class="card">
+<h2>上級</h2>
+<button onclick="startTest('上級')">
+上級テスト
+</button>
+</div></div>
 <div class="status"><div class="status-box">登録化学物質数：${chemicals.length}件</div></div>`;
 }
 
 function showList(){
- let html=`<button onclick="showHome()">ホームに戻る</button><h2>化学物質一覧</h2>`;
- chemicals.forEach((c,i)=>html+=`<div class="list-item">${i+1}. ${c.name}</div>`);
- content.innerHTML=html;
+let html = `
+<button onclick="showHome()">
+ホームに戻る
+</button>
+<h2>化学物質一覧</h2>
+<table class="list-table">
+<tr>
+<th>No</th>
+<th>化学物質名</th>
+<th>化学式</th>
+</tr>
+`;
+chemicals.forEach((c,i)=>{
+html += `
+<tr>
+<td>${i+1}</td>
+<td>${c.name}</td>
+<td>${formatFormula(c.formula)}</td>
+</tr>
+`;
+});
+html += `
+</table>
+`;
+content.innerHTML = html;
 }
 
-function startTest(){
- testQuestions=[...chemicals].sort(()=>Math.random()-0.5).slice(0,10);
+function startTest(level){
+const pool =
+chemicals.filter(
+c => c.level === level
+);
+
+testQuestions =
+[...pool]
+.sort(()=>Math.random()-0.5)
+.slice(0,10);
  currentIndex=0;score=0;wrongAnswers=[];
  showQuestion();
 }
