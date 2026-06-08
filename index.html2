@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学式 - Chemical Formula</title>
+
+<style>
+:root{--panel:#0d1a30;--cyan:#00e5ff;--green:#4dffb8;--text:#f5f9ff;--red:#ff6b6b;}
+*{box-sizing:border-box}
+body{font-family:sans-serif;color:var(--text);margin:0;padding:0;
+background:linear-gradient(135deg,#050814,#09111f,#050814);min-height:100vh}
+.container{max-width:1000px;margin:auto;padding:30px}
+.title{text-align:center}
+.title h1{font-size:4rem;margin-bottom:0}
+.subtitle{color:var(--cyan);letter-spacing:4px}
+.card-area{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.card,.question,.result,.list-item,.status-box{background:var(--panel);border-radius:16px}
+.card{padding:20px;width:320px;text-align:center}
+button{padding:12px 20px;border:none;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--green));font-weight:bold}
+#content{margin-top:30px}
+.list-item{padding:10px;margin:6px 0}
+.list-table{width:100%;border-collapse:collapse;margin-top:20px;}
+.list-table th,
+.list-table td{border:1px solid rgba(255,255,255,.15);padding:12px;text-align:left;}
+.list-table th{background:#132341;color:#00e5ff;}
+.question,.result{padding:25px;text-align:center}
+input{padding:10px;width:100%;max-width:400px;border-radius:8px;border:none}
+.correct{color:var(--green);font-size:2rem}
+.wrong{color:var(--red);font-size:2rem}
+.status{text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="title">
+<h1>化学式</h1>
+<div class="subtitle">Chemical Formula</div>
+</div>
+<div id="content"></div>
+</div>
+
+<script>
+const chemicals=[
+{name:"水素",formula:"H2",level:"初級"},
+{name:"ヘリウム",formula:"He",level:"初級"},
+{name:"ダイヤモンド",formula:"C",level:"初級"},
+{name:"黒鉛",formula:"C",level:"初級"},
+{name:"窒素",formula:"N2",level:"初級"},
+{name:"酸素",formula:"O2",level:"初級"},
+{name:"オゾン",formula:"O3",level:"初級"},
+{name:"フッ素",formula:"F2",level:"初級"},
+{name:"ネオン",formula:"Ne",level:"初級"},
+{name:"塩素",formula:"Cl2",level:"初級"},
+{name:"アルゴン",formula:"Ar",level:"初級"},
+{name:"臭素",formula:"Br2",level:"初級"},
+{name:"ヨウ素",formula:"I2",level:"初級"},
+{name:"水",formula:"H2O",level:"初級"},
+{name:"一酸化炭素",formula:"CO",level:"初級"},
+{name:"二酸化炭素",formula:"CO2",level:"初級"},
+{name:"一酸化窒素",formula:"NO",level:"初級"},
+{name:"二酸化窒素",formula:"NO2",level:"初級"},
+{name:"二酸化ケイ素",formula:"SiO2",level:"初級"},
+{name:"十酸化四リン",formula:"P4O10",level:"初級"},
+{name:"二酸化硫黄",formula:"SO2",level:"初級"},
+{name:"三酸化硫黄",formula:"SO3",level:"初級"},
+{name:"フッ化水素",formula:"HF",level:"初級"},
+{name:"塩化水素",formula:"HCl",level:"初級"},
+{name:"臭化水素",formula:"HBr",level:"初級"},
+{name:"ヨウ化水素",formula:"HI",level:"初級"},
+
+{name:"硝酸",formula:"HNO3",level:"中級"},
+{name:"硫酸",formula:"H2SO4",level:"中級"},
+{name:"酢酸",formula:"CH3COOH",level:"中級"},
+{name:"シュウ酸",formula:"(COOH)2",level:"中級"},
+{name:"リン酸",formula:"H3PO4",level:"中級"},
+{name:"水酸化ナトリウム",formula:"NaOH",level:"中級"},
+{name:"水酸化カリウム",formula:"KOH",level:"中級"},
+{name:"水酸化カルシウム",formula:"Ca(OH)2",level:"中級"},
+{name:"水酸化バリウム",formula:"Ba(OH)2",level:"中級"},
+{name:"水酸化銅(Ⅱ)",formula:"Cu(OH)2",level:"中級"},
+{name:"水酸化鉄(Ⅱ)",formula:"Fe(OH)2",level:"中級"},
+{name:"水酸化鉄(Ⅲ)",formula:"Fe(OH)3",level:"中級"},
+{name:"酸化ナトリウム",formula:"Na2O",level:"中級"},
+{name:"酸化マグネシウム",formula:"MgO",level:"中級"},
+{name:"酸化アルミニウム",formula:"Al2O3",level:"中級"},
+{name:"酸化カルシウム",formula:"CaO",level:"中級"},
+{name:"酸化マンガン(Ⅳ)",formula:"MnO2",level:"中級"},
+{name:"酸化鉄(Ⅱ)",formula:"FeO",level:"中級"},
+{name:"酸化鉄(Ⅲ)",formula:"Fe2O3",level:"中級"},
+{name:"四酸化三鉄",formula:"Fe3O4",level:"中級"},
+{name:"酸化銅(Ⅰ)",formula:"Cu2O",level:"中級"},
+{name:"酸化銅(Ⅱ)",formula:"CuO",level:"中級"},
+{name:"酸化亜鉛",formula:"ZnO",level:"中級"},
+{name:"酸化銀",formula:"Ag2O",level:"中級"},
+{name:"酸化鉛(Ⅳ)",formula:"PbO2",level:"中級"},
+{name:"塩化ナトリウム",formula:"NaCl",level:"中級"},
+{name:"塩化マグネシウム",formula:"MgCl2",level:"中級"},
+{name:"塩化アルミニウム",formula:"AlCl3",level:"中級"},
+{name:"塩化カリウム",formula:"KCl",level:"中級"},
+{name:"塩化カルシウム",formula:"CaCl2",level:"中級"},
+{name:"塩化鉄(Ⅱ)",formula:"FeCl2",level:"中級"},
+{name:"塩化鉄(Ⅲ)",formula:"FeCl3",level:"中級"},
+{name:"塩化銅(Ⅱ)",formula:"CuCl2",level:"中級"},
+{name:"塩化亜鉛",formula:"ZnCl2",level:"中級"},
+{name:"塩化銀",formula:"AgCl",level:"中級"},
+{name:"塩化スズ(Ⅱ)",formula:"SnCl2",level:"中級"},
+{name:"塩化鉛(Ⅱ)",formula:"PbCl2",level:"中級"},
+{name:"四塩化炭素",formula:"CCl4",level:"中級"},
+{name:"塩化アンモニウム",formula:"NH4Cl",level:"中級"},
+{name:"硝酸アンモニウム",formula:"NH4NO3",level:"中級"},
+{name:"硫化水素",formula:"H2S",level:"中級"},
+{name:"硫化鉄(Ⅱ)",formula:"FeS",level:"中級"},
+{name:"硫化銅(Ⅱ)",formula:"CuS",level:"中級"},
+{name:"硫化亜鉛",formula:"ZnS",level:"中級"},
+{name:"硫化銀",formula:"Ag2S",level:"中級"},
+{name:"硝酸カリウム",formula:"KNO3",level:"中級"},
+{name:"硝酸銅(Ⅱ)",formula:"Cu(NO3)2",level:"中級"},
+{name:"硝酸銀",formula:"AgNO3",level:"中級"},
+{name:"硫酸カルシウム",formula:"CaSO4",level:"中級"},
+{name:"硫酸鉄(Ⅱ)",formula:"FeSO4",level:"中級"},
+{name:"硫酸銅(Ⅱ)",formula:"CuSO4",level:"中級"},
+{name:"硫酸バリウム",formula:"BaSO4",level:"中級"},
+{name:"硫酸鉛(Ⅱ)",formula:"PbSO4",level:"中級"},
+{name:"硫酸水素ナトリウム",formula:"NaHSO4",level:"中級"},
+{name:"酢酸ナトリウム",formula:"CH3COONa",level:"中級"},
+{name:"酢酸鉛(Ⅱ)",formula:"(CH3COO)2Pb",level:"中級"},
+{name:"ヨウ化カリウム",formula:"KI",level:"中級"},
+{name:"炭酸ナトリウム",formula:"Na2CO3",level:"中級"},
+{name:"炭酸カルシウム",formula:"CaCO3",level:"中級"},
+{name:"炭酸水素ナトリウム",formula:"NaHCO3",level:"中級"},
+{name:"過マンガン酸カリウム",formula:"KMnO4",level:"中級"},
+{name:"過酸化水素",formula:"H2O2",level:"中級"},
+
+{name:"シアン化水素",formula:"HCN",level:"上級"},
+{name:"グルコース",formula:"C6H12O6",level:"上級"},
+{name:"二クロム酸カリウム",formula:"K2Cr2O7",level:"上級"},
+{name:"クロム酸カリウム",formula:"K2CrO4",level:"上級"},
+
+
+{name:"",formula:"",level:"上級"},
+];
+
+let testQuestions=[],currentIndex=0,score=0,wrongAnswers=[];
+
+function formatFormula(f){
+ const s={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+ return f.replace(/[0-9]/g,m=>s[m]);
+}
+
+function showHome(){
+content.innerHTML=`
+<div class="card-area">
+<div class="card"><h2>リスト</h2><p>化学物質一覧を表示</p><button onclick="showList()">リストを見る</button></div>
+<div class="card">
+<h2>初級</h2>
+<button onclick="startTest('初級')">
+初級テスト
+</button>
+</div>
+
+<div class="card">
+<h2>中級</h2>
+<button onclick="startTest('中級')">
+中級テスト
+</button>
+</div>
+
+<div class="card">
+<h2>上級</h2>
+<button onclick="startTest('上級')">
+上級テスト
+</button>
+</div></div>
+<div class="status"><div class="status-box">登録化学物質数：${chemicals.length}件</div></div>`;
+}
+
+function showList(){
+let html = `
+<button onclick="showHome()">
+ホームに戻る
+</button>
+<h2>化学物質一覧</h2>
+<table class="list-table">
+<tr>
+<th>No</th>
+<th>化学物質名</th>
+<th>化学式</th>
+</tr>
+`;
+chemicals.forEach((c,i)=>{
+html += `
+<tr>
+<td>${i+1}</td>
+<td>${c.name}</td>
+<td>${formatFormula(c.formula)}</td>
+</tr>
+`;
+});
+html += `
+</table>
+`;
+content.innerHTML = html;
+}
+
+function startTest(level){
+const pool =
+chemicals.filter(
+c => c.level === level
+);
+
+testQuestions =
+[...pool]
+.sort(()=>Math.random()-0.5)
+.slice(0,10);
+ currentIndex=0;score=0;wrongAnswers=[];
+ showQuestion();
+}
+
+function showQuestion(){
+ const q=testQuestions[currentIndex];
+ content.innerHTML=`<div class="question">
+ <h2>問題 ${currentIndex+1}/10</h2>
+ <h3>${q.name}</h3>
+ <input id="answer" placeholder="化学式を入力">
+ <br><br><button onclick="checkAnswer()">解答する</button>
+ </div>`;
+ document.getElementById('answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+}
+
+function checkAnswer(){
+ const q=testQuestions[currentIndex];
+ const answer=document.getElementById('answer').value.trim();
+ const correct=answer===q.formula;
+ if(correct) score++;
+ else wrongAnswers.push({name:q.name,correct:q.formula,answer});
+ content.innerHTML=`<div class="result">
+ <div class="${correct?'correct':'wrong'}">${correct?'○ 正解':'× 不正解'}</div>
+ <h2>${q.name}</h2>
+ <p>正解：<strong>${formatFormula(q.formula)}</strong></p>
+ ${!correct?`<p>あなたの解答：${formatFormula(answer||'未入力')}</p>`:''}
+ <br><button onclick="nextQuestion()">${currentIndex===9?'結果を見る':'次の問題へ'}</button>
+ </div>`;
+}
+
+function nextQuestion(){
+ currentIndex++;
+ if(currentIndex>=10) showResult(); else showQuestion();
+}
+
+function showResult(){
+ let html=`<div class="result"><h1>テスト終了</h1><h2>${score}/10点</h2><h3>正答率 ${Math.round(score*10)}%</h3>`;
+ if(wrongAnswers.length){
+   html+=`<h3>間違えた問題</h3>`;
+   wrongAnswers.forEach(w=>html+=`<p>${w.name} → ${formatFormula(w.correct)}</p>`);
+ }
+ html+=`<br><button onclick="showHome()">ホームに戻る</button></div>`;
+ content.innerHTML=html;
+}
+
+showHome();
+</script>
+</body>
+</html>
